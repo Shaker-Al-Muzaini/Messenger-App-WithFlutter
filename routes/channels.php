@@ -17,6 +17,8 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
+// tihs  is a channel info  Pusher
+
 Broadcast::channel('Messenger.{id}', static function ($user, $id){
 
     if ($user->id == $id){
