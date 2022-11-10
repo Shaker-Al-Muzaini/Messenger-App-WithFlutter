@@ -49,6 +49,7 @@ class MessagesController extends Controller
                 ]
 
         ]);
+        //user-al(1,2,3,4)only
 
 //        $user = Auth::user();
         $user =User::find(1);
