@@ -17,7 +17,7 @@ class MessageCreate implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
 
-
+//This event see her from the report of Pusher
     /**
      * @var \App\Models\Message
      */
