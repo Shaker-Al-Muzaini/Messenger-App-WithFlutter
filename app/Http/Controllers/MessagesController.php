@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageCreate;
-use App\Models\Conversation;
+use App\Models\Conversation; 
 use App\Models\Recipient;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -36,7 +36,7 @@ class MessagesController extends Controller
             'conversation_id'=>[
                 'int',
                 'exists:conversations,id',
-                Rule::requiredIf( function() use ($request){
+                Rule::requiredIf( function() use ($request){ 
                     return !$request->input('user_id');
                 }),
             ],
@@ -62,7 +62,7 @@ class MessagesController extends Controller
                 $conversation = $user->conversations()->findOrFail($conversation_id);
             } else {
 
-                $conversation = Conversation::where('type', '=', 'peer')
+                $conversation = Conversation::where('type', '=', 'peer') 
                     ->whereHas('participants', function ($builder) use ($user_id, $user) {
                         $builder->join('participants as participants2', 'participants2.conversation_id', '=', 'participants.conversation_id')
                             ->where('participants.user_id', '=', $user_id)
@@ -74,7 +74,7 @@ class MessagesController extends Controller
                         'user_id' => $user->id,
                         'type' => 'peer',
                     ]);
-
+ 
                     $conversation->participants()->attach([
                         $user->id => ['joined_at' => now()],
                         $user_id => ['joined_at' => now()],
@@ -97,14 +97,14 @@ class MessagesController extends Controller
                     $message->id,
                     $conversation->id
                 ]);
-
+ 
             $conversation->update([
                 'last_message_id'=>$message->id,
             ]);
             DB::commit();
             event(new MessageCreate($message));
 
-        } catch (Throwable $e) {
+        } catch (Throwable $e) { 
             DB::rollBack();
 
             throw $e;
@@ -118,7 +118,7 @@ class MessagesController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) 
     {
         //
     }
