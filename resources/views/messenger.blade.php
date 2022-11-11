@@ -168,10 +168,10 @@
                                     </ul>
                                 </div>
 
-                                <!-- Tabs content -->
+                                <!-- Tabs content
                                 <div class="tab-content" role="tablist">
                                     <div class="tab-pane fade show active" id="create-chat-info" role="tabpanel">
-
+ -->
                                         <div class="card border-0">
                                             <div class="profile">
                                                 <div class="profile-img text-primary rounded-top">
@@ -358,7 +358,7 @@
                                                             <div class="avatar avatar-online">
 
                                                                     <img class="avatar-img" src="assets/img/avatars/8.jpg" alt="">
-
+ -->
 
                                                             </div>
                                                         </div>
