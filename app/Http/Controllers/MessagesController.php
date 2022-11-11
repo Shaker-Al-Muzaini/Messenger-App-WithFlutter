@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessageCreate;
+use App\Events\MessageCreate; 
 use App\Models\Conversation; 
 use App\Models\Recipient;
 use App\Models\User;
@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Throwable;
+use Throwable; 
 
 class MessagesController extends Controller
 {
 
     public function index($id)
-    {
+    { 
         $user =Auth::user();
        $conversation= $user->conversations()->findOrFail($id);
         return  $conversation->messages()->pagintate();
@@ -24,7 +24,7 @@ class MessagesController extends Controller
 
 
     /**
-     * @throws Throwable
+     * @throws Throwable 
      */
     public function store(Request $request)
     {
@@ -46,7 +46,7 @@ class MessagesController extends Controller
                 Rule::requiredIf( function() use ($request){
                     return !$request->input('conversation_id');
                 }),
-                ]
+                ] 
 
         ]);
 
@@ -56,7 +56,7 @@ class MessagesController extends Controller
         $conversation_id = $request->post('conversation_id');
         $user_id = $request->post('user_id');
 
-        DB::beginTransaction();
+        DB::beginTransaction(); 
         try {
             if ($conversation_id) {
                 $conversation = $user->conversations()->findOrFail($conversation_id);
