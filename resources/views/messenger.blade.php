@@ -7,7 +7,7 @@
     <title>Messenger - 2.0.1</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="./assets/img/favicon/favicon.ico" type="image/x-icon"> 
+    <link rel="shortcut icon" href="./assets/img/favicon/favicon.ico" type="image/x-icon">
 
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -23,7 +23,7 @@
     <!-- Layout -->
     <div class="layout overflow-hidden"> 
         <!-- Navigation -->
-        <nav class="navigation d-flex flex-column text-center navbar navbar-light hide-scrollbar"> 
+        <nav class="navigation d-flex flex-column text-center navbar navbar-light hide-scrollbar">
             <!-- Brand -->
             <a href="index.html" title="Messenger" class="d-none d-xl-block mb-6">
                 <svg version="1.1" width="46px" height="46px" fill="currentColor" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 46 46" enable-background="new 0 0 46 46" xml:space="preserve">
@@ -41,7 +41,7 @@
             <!-- Nav items -->
             <ul class="d-flex nav navbar-nav flex-row flex-xl-column flex-grow-1 justify-content-between justify-content-xl-center align-items-center w-100 py-4 py-lg-2 px-lg-3" role="tablist">
                 <!-- Invisible item to center nav vertically -->
-                <li class="nav-item d-none d-xl-block invisible flex-xl-grow-1"> 
+                <li class="nav-item d-none d-xl-block invisible flex-xl-grow-1">
                     <a class="nav-link py-0 py-lg-8" href="#" title="">
                         <div class="icon icon-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
