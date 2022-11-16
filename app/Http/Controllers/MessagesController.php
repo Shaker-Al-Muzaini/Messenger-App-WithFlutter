@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
  
-use App\Events\MessageCreate;
+use App\Events\MessageCreate; 
 use App\Models\Conversation;
 use App\Models\Recipient;
 use App\Models\User;
