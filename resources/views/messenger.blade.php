@@ -600,12 +600,12 @@
                                         @endphp
                                         @if ($letter != $last_letter)
                                             <div class="my-5">
-                                                <small class="text-uppercase text-muted">tetel</small>
+                                                <small class="text-uppercase text-muted">{{$letter}}</small>
                                             </div>
                                         @endif
                                         @php
                                             $last_letter = $letter;
-//                                        @endphp
+                                        @endphp
 
 
                                             <!-- Card -->
@@ -618,11 +618,9 @@
                                                             <img class="avatar-img" src="{{ $friend->avatar_url }}" alt="">
                                                         </a>
                                                     </div>
-
                                                     <div class="col">
                                                         <h5><a href="#">{{ $friend->name }}</a></h5>
                                                         <p>{{ $friend->last_seen_at }}</p>
-
                                                     </div>
 
                                                     <div class="col-auto">
@@ -660,20 +658,60 @@
                 </div>
 
                 <!-- Chats -->
-                <div class="card-list">
-                    @foreach($chats as $chat )
-                        <a class="card border-0 text-reset">
-                        <div class="card-body">
-                            <div class="row gx-5">
-                                <div class="col-auto">
-                                     <div class="avatar avatar-online">
-                                         <span class="avatar-text">{{$chat}}</span>
-                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="me-auto mb-0">shaker</div>
+                <div class="card-list" >
 
+                        <div class="container py-8">
+                            <!-- Title -->
+                            <div class="mb-8">
+                                <h2 class="fw-bold m-0">Chats</h2>
+                            </div>
+                            <!-- Search -->
+                            <div class="mb-6">
+                                <form action="#">
+                                    <div class="input-group">
+                                        <div class="input-group-text">
+                                            <div class="icon icon-lg">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                            </div>
+                                        </div>
+
+                                        <input type="text" class="form-control form-control-lg ps-0" placeholder="Search messages or users" aria-label="Search for messages or users...">
+                                    </div>
+                                </form>
+                            </div>
+                            @foreach($chats as $chat )
+                            <!-- Chats -->
+                            <div class="card-list" id="chat-list">
+                                <a href="{{route('messenger',$chat->id)}}" class="card border-0 text-reset">
+                                    <div class="card-body">
+                                        <div class="row gx-5">
+                                            <div class="col-auto">
+                                                <div class="avatar avatar-online" >
+                                                    <span class="avatar-text">{{strtoupper(substr($chat->participants[0]->name,0,1))}}</span>
+
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <h5 class="me-auto mb-0">{{$chat->participants[0]->name}}</h5>
+                                                    <span class="text-muted extra-small ms-2">{{$chat->lastMessage->created_at->diffForHumans()}}</span>
+                                                </div>
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="line-clamp me-auto">
+                                                       {{Str::words($chat->lastMessage->body,20)}}
+                                                    </div>
+                                                    <div  class="badge badge-circle bg-primary ms-5">
+                                                        <span>ds</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- .card-body -->
+                                </a>
+                            </div>
+                            <!-- Chats -->
+                        </div>
                     @endforeach
 
 
@@ -1609,11 +1647,77 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </aside>
+        <div class="chat-body hide-scrollbar flex-1 h-100">
+            <div class="chat-body-inner">
+                <div class="py-6 py-lg-12" id="chat-body">
+                    @foreach($messages as $message)
+                    <div  class="message">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modal-profile" class="avatar avatar-responsive">
+                            <img class="avatar-img">
+                        </a>
+                        <div class="message-inner">
+                            <div class="message-body">
+                                <div class="message-content">
+                                    <div class="message-text">
+                                        <p>{{$message->body}}</p>
+                                    </div>
+                                    <div class="message-gallery">
+                                        <div class="row gx-3">
+                                            <div class="col">
+                                                <img class="img-fluid rounded" data-action="zoom" alt="" src="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="message-text">
+{{--                                        <div class="row align-items-center gx-4">--}}
+{{--                                            <div class="col-auto">--}}
+{{--                                                <a  class="avatar avatar-sm">--}}
+{{--                                                    <div class="avatar-text bg-white text-primary">--}}
+{{--                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>--}}
+{{--                                                    </div>--}}
+{{--                                                </a>--}}
+{{--                                            </div>--}}
+{{--                                            <div class="col overflow-hidden">--}}
+{{--                                                <h6 class="text-truncate text-reset">--}}
+{{--                                                    <a href="#" class="text-reset">e</a>--}}
+{{--                                                </h6>--}}
+{{--                                                <ul class="list-inline text-uppercase extra-small opacity-75 mb-0">--}}
+{{--                                                    <li class="list-inline-item">df KB</li>--}}
+{{--                                                </ul>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+
+                                    <!-- Dropdown -->
+                                    <div class="message-action">
+                                        <div class="dropdown">
+                                            <a class="icon text-muted" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="message-footer">
+                                <span class="extra-small text-muted">{{$message->created_at->diffForHumans()}}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                    @endforeach
+            </div>
+        </div>
+
         <!-- Sidebar -->
         <!-- Chat -->
-        <messenger :conversation="conversation" />
+
+{{--        <messenger :conversation="conversation" />--}}
         <!-- Chat -->
 
         <!-- Chat: Info -->
@@ -1712,8 +1816,45 @@
                         </a>
                     </li>
                 </ul>
-                <!-- Tabs -->
+                <form class="chat-form rounded-pill bg-dark" data-emoji-form="" method="post" action="/api/messages">
+                    @csrf
+                    <input type="hidden" name="conversation_id" >
+                    <div class="row align-items-center gx-0">
+                        <div class="col-auto">
+                            <a href="#"  class="btn btn-icon btn-link text-body rounded-circle" id="dz-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                            </a>
+                        </div>
 
+                        <div class="col">
+                            <div class="input-group">
+                                <textarea name="message"  class="form-control px-0" placeholder="Type your message..." rows="1" data-emoji-input="" data-autosize="true"></textarea>
+
+                                <a href="#" class="input-group-text text-body pe-0" data-emoji-btn="">
+                            <span class="icon icon-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                            </span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <button class="btn btn-icon btn-primary rounded-circle ms-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Tabs -->
+                <div class="chat-footer pb-3 pb-lg-7 position-absolute bottom-0 start-0">
+                    <!-- Chat: Files -->
+                    <div class="dz-preview bg-dark" id="dz-preview-row" data-horizontal-scroll="">
+                    </div>
+                    <!-- Chat: Files -->
+                    <!-- Chat: Form -->
+                    <!-- Chat: Form -->
+                </div>
                 <!-- Tabs: Content -->
                 <div class="tab-content py-2" role="tablist">
                     <!-- Profile -->
@@ -2250,7 +2391,7 @@
             </div>
             <!-- Offcanvas Body -->
         </div>
-        --}}
+
     </div>
     <!-- Layout -->
 
@@ -2636,7 +2777,9 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
+
 
 <!-- Scripts -->
 {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>--}}
@@ -2652,23 +2795,26 @@
 <script src="{{ asset('assets/js/vendor.js') }}"></script>
 <script src="{{ asset('assets/js/template.js') }}"></script>
 
-{{--
-        <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-        <script>
+
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script>
         // Enable pusher logging - don't include this in production
+        const userId={{Auth::id()}};
         Pusher.logToConsole = true;
-
-        var pusher = new Pusher('9bbd1071bbb820b9aef1', {
-            cluster: 'ap2',
+        var pusher = new Pusher('9146c2e994d11e403d19', {
+            cluster: 'mt1',
             authEndpoint: "/broadcasting/auth",
-        });
 
-        var channel = pusher.subscribe(`presence-Messenger.${userId}`);
+        });
+        var channel = pusher.subscribe('presence-Messenger.${userId}');
         channel.bind('new-message', function(data) {
-            addMessage(data.message)
+            // alert(JSON.stringify(data));
+            addMessage(data.message.body);
         });
     </script>
---}}
+
+
 
 </body>
 </html>

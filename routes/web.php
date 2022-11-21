@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',[MessageController::class,'index'])->middleware(['auth', 'verified']);
+
 
 
 
@@ -30,3 +30,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+Route::get('/{id?}',[MessageController::class,'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('messenger');

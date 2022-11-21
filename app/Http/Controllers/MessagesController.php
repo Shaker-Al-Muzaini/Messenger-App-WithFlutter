@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessageCreate;
+//use App\Events\MessageCreated;
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\Recipient;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,44 +16,74 @@ use Throwable;
 
 class MessagesController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index($id)
     {
-        $user =Auth::user();
-       $conversation= $user->conversations()->findOrFail($id);
-        return  $conversation->messages()->pagintate();
+        $user = Auth::user();
+        $conversation = $user->conversations()
+            ->with(['participants' => function($builder) use ($user) {
+                $builder->where('id', '<>', $user->id);
+            }])
+            ->findOrFail($id);
+
+        $messages = $conversation->messages()
+            ->with('user')
+            ->where(function($query) use ($user) {
+                $query
+                    ->where(function($query) use ($user) {
+                        $query->where('user_id', $user->id)
+                            ->whereNull('deleted_at');
+                    })
+                    ->orWhereRaw('id IN (
+                        SELECT message_id FROM recipients
+                        WHERE recipients.message_id = messages.id
+                        AND recipients.user_id = ?
+                        AND recipients.deleted_at IS NULL
+                    )', [$user->id]);
+            })
+            ->latest()
+            ->paginate();
+
+        return [
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ];
     }
 
-
     /**
-     * @throws Throwable
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-                $request->validate([
-            'message'=>[
-                'required',
-                'string'
-            ],
-            'conversation_id'=>[
-                'int',
-                'exists:conversations,id',
-                Rule::requiredIf( function() use ($request){
+        $request->validate([
+            // 'message' => [Rule::requiredIf(function() use ($request) {
+            //     return !$request->hasFile('attachment');
+            // }), 'string'],
+            // 'attachment' => ['file'],
+            'conversation_id' => [
+                Rule::requiredIf(function() use ($request) {
                     return !$request->input('user_id');
                 }),
-            ],
-            'user_id'=>[
                 'int',
-                'exists:users,id',
-                Rule::requiredIf( function() use ($request){
+                'exists:conversations,id',
+            ],
+            'user_id' => [
+                Rule::requiredIf(function() use ($request) {
                     return !$request->input('conversation_id');
                 }),
-                ]
-
+                'int',
+                'exists:users,id',
+            ],
         ]);
 
-//        $user = Auth::user();
-        $user =User::find(1);
+        $user = User::find(3);
 
         $conversation_id = $request->post('conversation_id');
         $user_id = $request->post('user_id');
@@ -83,26 +115,43 @@ class MessagesController extends Controller
 
             }
 
+            $type = 'text';
+            $message = $request->post('message');
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $message = [
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_size' => $file->getSize(),
+                    'mimetype' => $file->getMimeType(),
+                    'file_path' => $file->store('attachments', [
+                        'disk' => 'public'
+                    ]),
+                ];
+                $type = 'attachment';
+            }
+
             $message = $conversation->messages()->create([
-                'user_id'=>$user->id,
-                'body'=>$request->post('message')
+                'user_id' => $user->id,
+                'type' => $type,
+                'body' => $message,
             ]);
 
             DB::statement('
-             INSERT INTO  recipients (user_id,message_id)
-             SELECT user_id ,? FROM participants
-             where  conversation_id= ?
-             ',
-                [
-                    $message->id,
-                    $conversation->id
-                ]);
+                INSERT INTO recipients (user_id, message_id)
+                SELECT user_id, ? FROM participants
+                WHERE conversation_id = ?
+                AND user_id <> ?
+            ', [$message->id, $conversation->id, $user->id]);
 
             $conversation->update([
-                'last_message_id'=>$message->id,
+                'last_message_id' => $message->id,
             ]);
+
             DB::commit();
-            event(new MessageCreate($message));
+
+            $message->load('user');
+
+//            broadcast(new MessageCreated($message));
 
         } catch (Throwable $e) {
             DB::rollBack();
@@ -113,24 +162,60 @@ class MessagesController extends Controller
         return $message;
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function show($id)
     {
         //
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    public function destroy($id): array
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
     {
-        Recipient::where([
-            'user_id'=>Auth::user(),
-            'message_id'=>$id
-        ])->delete();
-        return[
-            'message'=>'deleted'
+        $user = Auth::user();
+
+        $user->sentMessages()
+            ->where('id', '=', $id)
+            ->update([
+                'deleted_at' => Carbon::now(),
+            ]);
+
+        if ($request->target == 'me') {
+
+            Recipient::where([
+                'user_id' => $user->id,
+                'message_id' => $id,
+            ])->delete();
+
+        } else {
+            Recipient::where([
+                'message_id' => $id,
+            ])->delete();
+        }
+
+        return [
+            'message' => 'deleted',
         ];
     }
 }
