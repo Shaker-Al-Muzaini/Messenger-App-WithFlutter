@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Conversation;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Auth;
 
 class ConversationsController extends Controller
