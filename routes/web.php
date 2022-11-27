@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\MessageController;  
 use App\Http\Controllers\ProfileController; 
-use Illuminate\Support\Facades\Route;     
+use Illuminate\Support\Facades\Route;      
  
 /*
 |--------------------------------------------------------------------------
